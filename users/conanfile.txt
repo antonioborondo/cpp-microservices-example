@@ -1,0 +1,6 @@
+[requires]
+mariadb-connector-cpp/1.1.4
+
+[generators]
+CMakeDeps
+CMakeToolchain
