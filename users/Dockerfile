@@ -19,9 +19,9 @@ conan profile detect
 
 EOF
 
-WORKDIR /users/
-
 COPY . /users/
+
+WORKDIR /users/
 
 RUN <<EOF
 
