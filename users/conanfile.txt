@@ -1,6 +1,7 @@
 [requires]
 cpp-httplib/0.20.1
 mariadb-connector-cpp/1.1.4
+nlohmann_json/3.12.0
 
 [generators]
 CMakeDeps

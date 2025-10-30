@@ -11,9 +11,11 @@ add_executable(users
 
 find_package(httplib REQUIRED)
 find_package(mariadb-connector-cpp REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 target_link_libraries(users
   PRIVATE
   httplib::httplib
   mariadb-connector-cpp::mariadb-connector-cpp
+  nlohmann_json::nlohmann_json
 )

@@ -26,5 +26,7 @@ services:
       - db
     volumes:
       - ./users/:/users/
+    environment:
+      DB_HOST: db
     ports:
       - "8081:8081"
