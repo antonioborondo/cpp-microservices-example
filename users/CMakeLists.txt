@@ -9,9 +9,11 @@ add_executable(users
   src/main.cc
 )
 
+find_package(httplib REQUIRED)
 find_package(mariadb-connector-cpp REQUIRED)
 
 target_link_libraries(users
   PRIVATE
+  httplib::httplib
   mariadb-connector-cpp::mariadb-connector-cpp
 )
