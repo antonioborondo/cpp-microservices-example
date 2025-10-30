@@ -1,3 +1,3 @@
-# cpp-microservice-example
+# cpp-microservices-example
 
 ![Diagram](diagram.png?raw=true)
