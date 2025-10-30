@@ -18,7 +18,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - 8081:8080
 
   users:
     build: ./users
@@ -29,7 +29,7 @@ services:
     environment:
       DB_HOST: db
     ports:
-      - "8081:8081"
+      - "8082:8081"
 
   web:
     image: nginx

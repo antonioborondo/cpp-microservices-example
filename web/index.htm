@@ -1,1 +1,69 @@
-Hello world!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Management</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    form, table { margin-bottom: 2em; }
+    table { border-collapse: collapse; width: 400px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Users</h1>
+
+  <form id="userForm">
+    <input id="username" placeholder="Username" required />
+    <input id="email" placeholder="Email" type="email" required />
+    <button type="submit">Add User</button>
+  </form>
+
+  <table id="usersTable">
+    <thead>
+      <tr><th>ID</th><th>Username</th><th>Email</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const API_BASE = "http://users:8081/api/v1/";
+
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/users`);
+        const data = await res.json();
+        const tbody = document.querySelector("#usersTable tbody");
+        tbody.innerHTML = "";
+        data.items.forEach(user => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${user.id}</td><td>${user.username}</td><td>${user.email}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Error loading users:", err);
+      }
+    }
+
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      try {
+        await fetch(`${API_BASE}/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email })
+        });
+        e.target.reset();
+        await loadUsers();
+      } catch (err) {
+        console.error("Error creating user:", err);
+      }
+    });
+
+    // Load users when page loads
+    loadUsers();
+  </script>
+</body>
+</html>
