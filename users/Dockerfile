@@ -1,19 +1,40 @@
 FROM ubuntu:24.04
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+RUN <<EOF
 
-RUN pip install conan==2.21.0 --break-system-packages && \
-    conan profile detect
+export DEBCONF_NOWARNINGS=yes
+export DEBIAN_FRONTEND=noninteractive
 
-WORKDIR /users
+apt-get update
+apt-get upgrade -y
+apt-get install -y \
+  build-essential \
+  cmake \
+  python3-pip
+apt-get clean
+rm -rf /var/lib/apt/lists/*
 
-CMD ["bash", "-c", "\
-      conan install . --output-folder=build --build=missing --settings compiler=gcc --settings compiler.cppstd=17 --settings build_type=Release && \
-      cmake --preset conan-release && \
-      cmake --build --preset conan-release && \
-      ./build/users \
-    "]
+pip install conan --break-system-packages
+conan profile detect
+
+EOF
+
+WORKDIR /users/
+
+COPY . /users/
+
+RUN <<EOF
+
+conan install \
+  --build=missing \
+  --output-folder=build \
+  --settings build_type=Release \
+  --settings compiler.cppstd=17 \
+  --settings compiler=gcc
+
+cmake --preset conan-release
+cmake --build --preset conan-release
+
+EOF
+
+CMD ["sh", "-c", "./build/users"]
