@@ -30,3 +30,10 @@ services:
       DB_HOST: db
     ports:
       - "8081:8081"
+
+  web:
+    image: nginx
+    volumes:
+    - ./web:/usr/share/nginx/html
+    ports:
+    - "8080:80"
