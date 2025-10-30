@@ -1,0 +1,17 @@
+---
+BasedOnStyle: Google
+IncludeBlocks: Regroup
+IncludeCategories:
+# Project's headers
+  - Regex: '"([a-z0-9_]+/?)+\.h"'
+    Priority: 4
+# Other libraries' headers
+  - Regex: '<(boost|curl|inicpp)([a-z0-9_]*/?)*\.(h|hpp)>'
+    Priority: 3
+# C++ standard library headers
+  - Regex: '<[a-z0-9_]+>'
+    Priority: 2
+# C system headers
+  - Regex: '<[a-z0-9_]+\.h>'
+    Priority: 1
+...
