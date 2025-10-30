@@ -14,7 +14,7 @@ int main() {
     try {
       sql::Driver* driver = sql::mariadb::get_driver_instance();
 
-      sql::SQLString url = "jdbc:mariadb://localhost:3306/app";
+      sql::SQLString url = "jdbc:mariadb://db:3306/app";
 
       sql::Properties properties({{"user", "user"}, {"password", "pwd"}});
 

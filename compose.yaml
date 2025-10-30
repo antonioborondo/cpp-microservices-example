@@ -19,3 +19,12 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  users:
+    build: ./users
+    depends_on:
+      - db
+    volumes:
+      - ./users/:/users/
+    ports:
+      - "8081:8081"
