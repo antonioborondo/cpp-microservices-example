@@ -34,7 +34,7 @@ int main() {
       std::unique_ptr<sql::ResultSet> res(
           stmt->executeQuery("SELECT * FROM users"));
 
-      nlohmann::json items{nlohmann::json::array()};
+      nlohmann::json items;
       while (res->next()) {
         items.push_back({{"id", res->getInt("id")},
                          {"username", res->getString("username")},
