@@ -27,17 +27,24 @@
   </table>
 
   <script>
-    const API_BASE = "http://users:8081/api/v1/";
+    const API_BASE = "/api/v1";
 
     async function loadUsers() {
       try {
         const res = await fetch(`${API_BASE}/users`);
         const data = await res.json();
+
+        // Your backend returns: { "users": [ ... ] }
+        const list = data.users || [];  // <── changed here
+
         const tbody = document.querySelector("#usersTable tbody");
         tbody.innerHTML = "";
-        data.items.forEach(user => {
+        list.forEach(user => {
           const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${user.id}</td><td>${user.username}</td><td>${user.email}</td>`;
+          tr.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.user}</td>
+            <td>${user.email}</td>`;
           tbody.appendChild(tr);
         });
       } catch (err) {

@@ -29,8 +29,6 @@ services:
       - "8082:8082"
 
   web:
-    image: nginx
-    volumes:
-    - ./web:/usr/share/nginx/html
+    build: ./web
     ports:
-    - "8080:80"
+    - "8081:80"
