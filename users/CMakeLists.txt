@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(users
   src/main.cc
+  src/user.cc
+  src/users.cc
 )
 
 find_package(httplib REQUIRED)
