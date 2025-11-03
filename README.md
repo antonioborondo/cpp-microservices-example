@@ -7,3 +7,8 @@ Microservices sandbox for experimenting with different technologies and programm
 ## Diagram
 
 ![Diagram](diagram.png?raw=true)
+
+## Tools
+
+- FossFLOW: <https://github.com/stan-smith/FossFLOW>
+- Docker Compose: <https://github.com/docker/compose>
