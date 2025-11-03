@@ -31,4 +31,10 @@ services:
   web:
     build: ./web
     ports:
-    - "8081:80"
+    - "8083:80"
+
+  products:
+    build: ./products
+    restart: always
+    ports:
+      - "8084:8084"
