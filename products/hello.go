@@ -13,7 +13,7 @@ type Product struct {
 
 func main() {
 	http.HandleFunc("/api/v1/products", read)
-	http.ListenAndServe(":8084", nil)
+	http.ListenAndServe(":8083", nil)
 }
 
 func read(w http.ResponseWriter, r *http.Request) {
