@@ -9,14 +9,15 @@ import (
 	"os"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Product struct {
-	ID    int     `json:"id"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+	ID    interface{} `bson:"_id,omitempty" json:"id"`
+	Name  string      `bson:"name" json:"name"`
+	Price float64     `bson:"price" json:"price"`
 }
 
 func getEnvOr(key, defaultValue string) string {
@@ -29,7 +30,7 @@ func getEnvOr(key, defaultValue string) string {
 func main() {
 	mongoHost := getEnvOr("MONGO_HOST", "localhost")
 	mongoPort := getEnvOr("MONGO_PORT", "27017")
-	mongoUri := "mongodb://" + mongoHost + ":" + mongoPort
+	mongoUri := "mongodb://root:example@" + mongoHost + ":" + mongoPort
 	mongoDb := getEnvOr("MONGO_DB", "app")
 	mongoCollection := getEnvOr("MONGO_COLLECTION", "products")
 	port := getEnvOr("PORT", "8083")
@@ -57,23 +58,32 @@ func main() {
 	coll := db.Collection(mongoCollection)
 	fmt.Println("📦 Ready to use collection:", coll.Name())
 
-	http.HandleFunc("/api/v1/products", read)
+	http.HandleFunc("/api/v1/products", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		cursor, err := coll.Find(ctx, bson.M{})
+		if err != nil {
+			log.Printf("❌ Error during Find(): %v\n", err)
+			http.Error(w, "Database error", http.StatusInternalServerError)
+			return
+		}
+
+		defer cursor.Close(ctx)
+
+		var products []Product
+		if err := cursor.All(ctx, &products); err != nil {
+			http.Error(w, "Error reading data", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]any{"products": products})
+	})
 	http.ListenAndServe(":"+port, nil)
-}
-
-func read(w http.ResponseWriter, r *http.Request) {
-	// Hardcoded products
-	products := []Product{
-		{ID: 1, Name: "Laptop", Price: 999.99},
-		{ID: 2, Name: "Mouse", Price: 25.50},
-		{ID: 3, Name: "Keyboard", Price: 49.90},
-	}
-
-	// Set header so client knows it’s JSON
-	w.Header().Set("Content-Type", "application/json")
-
-	// Encode to JSON and write to response
-	if err := json.NewEncoder(w).Encode(products); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
