@@ -55,25 +55,27 @@ services:
       MONGO_COLLECTION: "products"
       PORT: "8083"
 
-  mongo:
-    image: mongo:8.2.1
-    restart: always
-    volumes:
-      - ./mongo/data:/data/db
+  mongodb:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
       MONGO_INITDB_DATABASE: app
+    image: mongo:8.2.1
     ports:
-      - "27017:27017"
+      - 27017:27017
+    restart: unless-stopped
+    volumes:
+      - ./mongodb/data:/data/db
 
   mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8091:8081
+    depends_on:
+      - mongodb
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
       ME_CONFIG_BASICAUTH_ENABLED: true
       ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
       ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+    image: mongo-express:1.0.2-18
+    ports:
+      - 8091:8081
+    restart: unless-stopped
