@@ -1,6 +1,6 @@
 services:
 
-  web:
+  nginx:
     depends_on:
       - products
       - users
@@ -47,13 +47,13 @@ services:
     build: ./products
     restart: always
     ports:
-      - "8083:8083"
+      - "8082:8082"
     environment:
       MONGO_HOST: "mongo"
       MONGO_PORT: "27017"
       MONGO_DB: "app"
       MONGO_COLLECTION: "products"
-      PORT: "8083"
+      PORT: "8082"
 
   mongodb:
     environment:
