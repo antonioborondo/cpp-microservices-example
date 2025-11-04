@@ -297,7 +297,7 @@
   "items": [
     {
       "id": "cb8bd80c-0b90-420d-910f-6ff1648a4e34",
-      "name": "SQL (MariaDB)",
+      "name": "MariaDB",
       "icon": "storage"
     },
     {
@@ -307,7 +307,7 @@
     },
     {
       "id": "3d3b93c9-5bc6-4bfd-b58b-192716a9feb5",
-      "name": "adminer",
+      "name": "Adminer",
       "icon": "server"
     },
     {
@@ -317,7 +317,7 @@
     },
     {
       "id": "d1abddf6-8617-49ec-b4a6-f023afe5d667",
-      "name": "web",
+      "name": "nginx",
       "icon": "server"
     },
     {
@@ -329,12 +329,38 @@
       "id": "2082881f-5b9b-4603-a4e6-ce6ab09277e1",
       "name": "NoSQL (MongoDB)",
       "icon": "storage"
+    },
+    {
+      "id": "af363d21-fddd-47db-b936-9f43b2fb8790",
+      "name": "MongoDB",
+      "icon": "storage"
+    },
+    {
+      "id": "0bca1a70-ed2a-405a-889b-df6aa3762f36",
+      "name": "mongo-express",
+      "icon": "server"
     }
   ],
   "views": [
     {
       "name": "Untitled view",
       "items": [
+        {
+          "labelHeight": 60,
+          "id": "0bca1a70-ed2a-405a-889b-df6aa3762f36",
+          "tile": {
+            "x": 3,
+            "y": -3
+          }
+        },
+        {
+          "labelHeight": 60,
+          "id": "af363d21-fddd-47db-b936-9f43b2fb8790",
+          "tile": {
+            "x": 3,
+            "y": -1
+          }
+        },
         {
           "labelHeight": 60,
           "id": "7b2fd6a7-3d73-415b-8cc4-f03a097ea47f",
@@ -385,6 +411,44 @@
         }
       ],
       "connectors": [
+        {
+          "id": "8098dbda-b0db-4906-a4b4-50a7bdc72656",
+          "color": "blue",
+          "anchors": [
+            {
+              "id": "962edef7-2b72-49f6-aeb1-7dc7769089f3",
+              "ref": {
+                "item": "af363d21-fddd-47db-b936-9f43b2fb8790"
+              }
+            },
+            {
+              "id": "6f1721f3-d09d-45a4-9e00-2356d8aa71b6",
+              "ref": {
+                "item": "0bca1a70-ed2a-405a-889b-df6aa3762f36"
+              }
+            }
+          ],
+          "showArrow": false
+        },
+        {
+          "id": "52f5962f-72be-4e70-8a0b-3a9d6834d2c4",
+          "color": "blue",
+          "anchors": [
+            {
+              "id": "ef8c06c1-9e94-49b8-9700-3c2b90311612",
+              "ref": {
+                "item": "7b2fd6a7-3d73-415b-8cc4-f03a097ea47f"
+              }
+            },
+            {
+              "id": "46cb225b-6c10-40fe-86b5-008de6c3c68c",
+              "ref": {
+                "item": "af363d21-fddd-47db-b936-9f43b2fb8790"
+              }
+            }
+          ],
+          "showArrow": false
+        },
         {
           "id": "da65e13c-19c4-4c81-8d8f-ad89031e89d1",
           "color": "blue",
@@ -507,12 +571,13 @@
           "labels": [
             {
               "id": "4e0f4635-c01a-4300-a37d-f86ad1d8e2ea",
-              "text": "index.html",
+              "text": "/",
               "position": 50,
               "height": 0,
               "line": "1"
             }
-          ]
+          ],
+          "showArrow": false
         },
         {
           "id": "5904f2c0-e8e4-4195-be14-deebac49a97d",
@@ -558,7 +623,7 @@
       "rectangles": [],
       "textBoxes": [],
       "id": "2124802e-7025-4de4-918f-613f44a39a15",
-      "lastUpdated": "2025-11-03T19:29:14.367Z"
+      "lastUpdated": "2025-11-04T15:35:08.977Z"
     }
   ],
   "fitToScreen": true
