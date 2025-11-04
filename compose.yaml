@@ -48,3 +48,32 @@ services:
     restart: always
     ports:
       - "8083:8083"
+    environment:
+      MONGO_HOST: "mongo"
+      MONGO_PORT: "27017"
+      MONGO_DB: "app"
+      MONGO_COLLECTION: "products"
+      PORT: "8083"
+
+  mongo:
+    image: mongo:8.2.1
+    restart: always
+    volumes:
+      - ./mongo/data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: app
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8085:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
+      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
