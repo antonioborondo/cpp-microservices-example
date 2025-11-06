@@ -9,8 +9,8 @@ services:
       - 8080:80
     restart: unless-stopped
     volumes:
-      - ./web/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./web/public:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/public:/usr/share/nginx/html
 
   users:
     build: ./users
