@@ -26,6 +26,26 @@
     <tbody></tbody>
   </table>
 
+  <h2>Products</h2>
+
+  <form id="productForm">
+    <input id="productName" placeholder="name" required />
+    <input id="productPrice" placeholder="price" required />
+    <button type="submit">Add product</button>
+  </form>
+
+  <table id="productsTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
   <script>
     const API_BASE = "/api/v1";
 
@@ -52,6 +72,28 @@
       }
     }
 
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        const data = await res.json();
+
+        const list = data.products || [];
+
+        const tbody = document.querySelector("#productsTable tbody");
+        tbody.innerHTML = "";
+        list.forEach(product => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${product.price}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Error loading products:", err);
+      }
+    }
+
     document.getElementById("userForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value;
@@ -69,8 +111,26 @@
       }
     });
 
-    // Load users when page loads
+    document.getElementById("productForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("productName").value;
+      const price = parseFloat(document.getElementById("productPrice").value);
+      try {
+        console.log("POST URL =", `${API_BASE}/products`);
+        await fetch(`${API_BASE}/products`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, price })
+        });
+        e.target.reset();
+        await loadProducts();
+      } catch (err) {
+        console.error("Error creating product:", err);
+      }
+    });
+
     loadUsers();
+    loadProducts();
   </script>
 </body>
 </html>
