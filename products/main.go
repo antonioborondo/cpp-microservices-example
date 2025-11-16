@@ -27,80 +27,6 @@ func getEnvOr(key, defaultValue string) string {
 	return defaultValue
 }
 
-func productsHandler(w http.ResponseWriter, r *http.Request) {
-	// CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "*") // or your frontend origin
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	// Handle preflight
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-
-	switch r.Method {
-	case http.MethodGet:
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		cursor, err := coll.Find(ctx, bson.M{})
-		if err != nil {
-			log.Printf("❌ Error during Find(): %v\n", err)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-
-		defer cursor.Close(ctx)
-
-		var products []Product
-		if err := cursor.All(ctx, &products); err != nil {
-			http.Error(w, "Error reading data", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{"products": products})
-		return
-
-	case http.MethodPost:
-		var p Product
-
-		// Decode body
-		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-		log.Println("Received body:", p)
-		if p.Name == "" || p.Price <= 0 {
-			http.Error(w, "Missing or invalid fields", http.StatusBadRequest)
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		// Insert into Mongo
-		result, err := coll.InsertOne(ctx, p)
-		if err != nil {
-			log.Printf("❌ Insert error: %v\n", err)
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-
-		p.ID = result.InsertedID // return the saved object with the ID assigned
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(p)
-		return
-
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-}
-
 func main() {
 	mongoHost := getEnvOr("MONGO_HOST", "localhost")
 	mongoPort := getEnvOr("MONGO_PORT", "27017")
@@ -132,7 +58,74 @@ func main() {
 	coll := db.Collection(mongoCollection)
 	fmt.Println("📦 Ready to use collection:", coll.Name())
 
-	http.HandleFunc("/api/v1/products", productsHandler)
-	http.HandleFunc("/api/v1/products/", productsHandler)
+	http.HandleFunc("/api/v1/products", func(w http.ResponseWriter, r *http.Request) {
+		// Handle preflight
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		switch r.Method {
+		case http.MethodGet:
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			cursor, err := coll.Find(ctx, bson.M{})
+			if err != nil {
+				log.Printf("❌ Error during Find(): %v\n", err)
+				http.Error(w, "Database error", http.StatusInternalServerError)
+				return
+			}
+
+			defer cursor.Close(ctx)
+
+			var products []Product
+			if err := cursor.All(ctx, &products); err != nil {
+				http.Error(w, "Error reading data", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]any{"products": products})
+			return
+
+		case http.MethodPost:
+			var p Product
+
+			// Decode body
+			if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+				http.Error(w, "Invalid JSON", http.StatusBadRequest)
+				return
+			}
+			log.Println("Received body:", p)
+			if p.Name == "" || p.Price <= 0 {
+				http.Error(w, "Missing or invalid fields", http.StatusBadRequest)
+				return
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			// Insert into Mongo
+			result, err := coll.InsertOne(ctx, p)
+			if err != nil {
+				log.Printf("❌ Insert error: %v\n", err)
+				http.Error(w, "Database error", http.StatusInternalServerError)
+				return
+			}
+
+			p.ID = result.InsertedID // return the saved object with the ID assigned
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(p)
+			return
+
+		default:
+			log.Print("etamo po aqui")
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+	})
 	http.ListenAndServe(":"+port, nil)
 }
