@@ -45,11 +45,13 @@ services:
 
   products:
     build: ./products
+    depends_on:
+      - mongodb
     restart: always
     ports:
       - "8082:8082"
     environment:
-      MONGO_HOST: "mongo"
+      MONGO_HOST: "mongodb"
       MONGO_PORT: "27017"
       MONGO_DB: "app"
       MONGO_COLLECTION: "products"
